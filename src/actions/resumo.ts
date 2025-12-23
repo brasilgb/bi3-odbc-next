@@ -1,31 +1,73 @@
 'use server'
 
-import { getDBMakerPool } from '@/lib/dbmaker';
+import { fetchFromSidecar } from "@/services/api-client";
 
-export async function buscarDadosBI001() {
-  try {
-    const pool = await getDBMakerPool();
 
-    // Executar a consulta do seu exemplo
-    const query = 'SELECT * FROM SYSADM.A_BI001 LIMIT 10';
-    
-    // O pool gerencia a conexão e desconexão automaticamente
-    const result = await pool.query(query);
+// Interfaces (Modelos de Dados)
+export interface IAssociacao {
+  dataChave: number;
+  departamento: string;
+  associacao: string;
+  atualizacao: string;
+  faturamento: number;
+  repFaturamento: number;
+  projecao: number;
+  margem: number;
+  precoMedio: number;
+  ticketMedio: number;
+  metaAlcancada: number;
+  juros: number;
+}
 
-    // DICA: O Next.js não aceita retornar objetos complexos do ODBC diretamente.
-    // É boa prática converter para um objeto simples JSON.
-    const dados = JSON.parse(JSON.stringify(result));
+export interface IFilial {
+  dataChave: number;
+  departamento: string;
+  idFilial: number;
+  filial: string; // Nome da filial
+  atualizacao: string;
+  faturamento: number;
+  repFaturamento: number;
+  projecao: number;
+  margem: number;
+  precoMedio: number;
+  ticketMedio: number;
+  metaAlcancada: number;
+  juros: number;
+}
 
-    return { 
-      success: true, 
-      data: dados 
-    };
+export interface ITotais {
+  dataChave: number;
+  departamento: string;
+  atualizacao: string;
+  meta: number;
+  faturamento: number;
+  projecao: number;
+  margem: number;
+  precoMedio: number;
+  ticketMedio: number;
+  metaAlcancada: number;
+  faturamentoSemBr: number;    // BI040_FATUSEMBR
+  margemSemBr: number;         // BI040_MARGSEMBR
+  precoMedioSemBr: number;     // BI040_PRECOMEDSEMBR
+  vendaAgora: number;
+  vendaDia: number;
+  margemMediaAno: number;
+  jurosMedioAno: number;
+  juros: number;
+  jurosAgora: number;          // BI040_JUROAGORA
+}
 
-  } catch (err) {
-    console.error('Erro na Action do DBMaker:', err);
-    return { 
-      success: false, 
-      error: 'Erro ao consultar dados.' 
-    };
-  }
+// --- ACTIONS SIMPLIFICADAS ---
+
+export async function buscarAssociacoes(data: string) {
+  // Chamada limpa: Endpoint + Parametros + Tipo de Retorno (Array de IAssociacao)
+  return fetchFromSidecar<IAssociacao[]>('/resumo/associacoes', { data });
+}
+
+export async function buscarFiliais(data: string) {
+  return fetchFromSidecar<IFilial[]>('/resumo/filiais', { data });
+}
+
+export async function buscarTotais(data: string) {
+  return fetchFromSidecar<ITotais[]>('/resumo/totais', { data });
 }
