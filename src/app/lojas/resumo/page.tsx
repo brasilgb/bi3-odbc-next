@@ -26,7 +26,7 @@ export default function Resumo() {
   const [loading, setLoading] = useState(false);
 
   // 2. Função de busca isolada
-  const fetchDashboardData = useCallback(async (dateString: string) => {
+  const fetchResumoData = useCallback(async (dateString: string) => {
     setLoading(true);
     try {
       // OBS: Verifique se suas Server Actions esperam apenas a STRING ou um OBJETO { data: dateString }
@@ -67,9 +67,9 @@ export default function Resumo() {
     }
 
     const formattedDate = moment(dateToUse).format("YYYYMMDD");
-    fetchDashboardData(formattedDate);
+    fetchResumoData(formattedDate);
 
-  }, [rawDate, fetchDashboardData]);
+  }, [rawDate, fetchResumoData]);
 
   // Estilos dinâmicos para as Tabs (Sintaxe Tailwind v3 correta)
   const activeTabClass = "data-[state=active]:bg-[var(--brand-color)] data-[state=active]:text-white data-[state=active]:border-[var(--brand-color)] data-[state=active]:shadow-md";
